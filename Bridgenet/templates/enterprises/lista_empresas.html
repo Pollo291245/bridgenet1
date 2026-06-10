@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Directorio de Empresas - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="seccion-contenedor">
+    <div class="seccion-header" style="flex-direction: column; align-items: flex-start; gap: 20px;">
+        <h2>Directorio de <span>Empresas</span></h2>
+        
+        <form method="GET" action="{% url 'enterprises:lista' %}" style="display: flex; gap: 15px; width: 100%; flex-wrap: wrap; background-color: var(--color-tarjeta); padding: 20px; border-radius: 10px; border: 1px solid var(--color-borde);">
+            
+            <div style="flex: 1; min-width: 250px;">
+                <input type="text" name="q" value="{{ query_actual }}" placeholder="Buscar por nombre o RUT..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--color-borde);">
+            </div>
+
+            <div style="flex: 1; min-width: 200px;">
+                <select name="tamano" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--color-borde);">
+                    <option value="">Todos los tamaños</option>
+                    {% for valor, etiqueta in tamanos %}
+                        <option value="{{ valor }}" {% if tamano_actual == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="flex: 1; min-width: 200px;">
+                <input type="text" name="area" value="{{ area_actual }}" placeholder="Área de producción (Ej. Tecnología)" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--color-borde);">
+            </div>
+
+            <button type="submit" class="boton" style="padding: 10px 20px; border: none; cursor: pointer;">Buscar</button>
+            <a href="{% url 'enterprises:lista' %}" class="boton" style="background-color: transparent; color: var(--color-principal); border: 1px solid var(--color-principal); text-decoration: none;">Limpiar</a>
+        </form>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 30px;">
+        {% for empresa in empresas %}
+            <article class="tarjeta" style="align-items: center; text-align: center;">
+                <div style="width: 60px; height: 60px; background-color: var(--color-principal); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin-bottom: 15px;">
+                    {{ empresa.nombre|make_list|first|upper }}
+                </div>
+                <h3>{{ empresa.nombre }}</h3>
+                <p class="empresa-info" style="margin-bottom: 5px;"><strong>Área:</strong> {{ empresa.area_produccion }}</p>
+                <p class="empresa-info" style="font-size: 0.85rem; margin-bottom: 15px;">{{ empresa.get_tamano_empresa_display }}</p>
+                <a href="{% url 'enterprises:detalle' empresa.pk %}" class="btn-perfil" style="display: block;">Ver perfil completo</a>
+            </article>
+        {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background-color: var(--color-fondo); border: 1px dashed var(--color-borde); border-radius: 10px;">
+                <h3 style="color: var(--color-texto-claro);">No se encontraron empresas con esos filtros.</h3>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

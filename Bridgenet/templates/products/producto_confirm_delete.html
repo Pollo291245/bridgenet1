@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Eliminar {{ producto.nombre_producto }} - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card" style="max-width: 500px; text-align: center;">
+        <h1 style="color: #ef4444;">¿Eliminar Producto?</h1>
+        <p style="margin-bottom: 20px;">Estás a punto de eliminar permanentemente el producto <strong>"{{ producto.nombre_producto }}"</strong> de tu catálogo. Esta acción no se puede deshacer.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button type="submit" class="auth-button" style="flex: 1; background-color: #ef4444; border-color: #ef4444;">Sí, eliminar</button>
+                <a href="{% url 'products:detalle' producto.pk %}" class="auth-button secondary" style="flex: 1; text-decoration: none;">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mi Panel - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card" style="max-width: 750px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-borde); padding-bottom: 15px; margin-bottom: 25px;">
+            <div>
+                <h1 style="margin-bottom: 5px;">Mi Panel de Control</h1>
+                <p style="color: #64748b; margin: 0;">Gestiona tus datos personales y tu actividad B2B.</p>
+            </div>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="boton" 
+                        style="background: transparent; border: 1px solid #ef4444; color: #ef4444; cursor: pointer; font-family: inherit; font-size: 1rem; padding: 8px 15px;">
+                        Cerrar sesión
+                    </button>
+                </form>        
+            </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            
+            <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--color-principal); margin: 0;">Mis Datos</h3>
+                    <a href="{% url 'editar_perfil' %}" style="font-size: 0.9rem; color: var(--color-principal); text-decoration: none;">✏️ Editar</a>
+                </div>
+                
+                <p style="margin-bottom: 8px;"><strong>Usuario:</strong> {{ user.username }}</p>
+                <p style="margin-bottom: 8px;"><strong>Nombre:</strong> {{ user.first_name|default:'-' }} {{ user.last_name|default:'' }}</p>
+                <p style="margin-bottom: 8px;"><strong>Correo:</strong> {{ user.email|default:'-' }}</p>
+            </div>
+
+            <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                <h3 style="color: var(--color-principal); margin-bottom: 15px;">Mi Organización</h3>
+                
+                {% if user.empresa_rel %}
+                    <p style="margin-bottom: 8px;"><strong>Empresa:</strong> {{ user.empresa_rel.nombre }}</p>
+                    <p style="margin-bottom: 8px;"><strong>RUT:</strong> {{ user.empresa_rel.rut }}</p>
+                    <p style="margin-bottom: 15px;"><strong>Área:</strong> {{ user.empresa_rel.area_produccion }}</p>
+                    
+                    <a href="{% url 'enterprises:detalle' user.empresa_rel.pk %}" class="boton" style="display: block; text-align: center; text-decoration: none;">Ir al Perfil de la Empresa</a>
+                {% else %}
+                    <p style="margin-bottom: 15px; color: #64748b;">No tienes ninguna empresa registrada ni asociada a esta cuenta.</p>
+                    <a href="{% url 'registro' %}" class="boton" style="display: block; text-align: center; background-color: #10b981; border-color: #10b981; text-decoration: none;">➕ Registrar Empresa</a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px solid var(--color-borde); padding-top: 25px;">
+            <h3 style="margin-bottom: 20px;">Mi Actividad</h3>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button class="boton" style="background-color: transparent; border: 1px solid var(--color-borde); color: var(--color-texto); cursor: default;">
+                    Proveedores Seguidos <span style="background-color: var(--color-principal); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">{{ user.proveedores_favoritos.count }}</span>
+                </button>
+                
+                <button class="boton" style="background-color: transparent; border: 1px solid var(--color-borde); color: var(--color-texto); cursor: default;">
+                    Productos Guardados <span style="background-color: var(--color-principal); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">{{ user.productos_guardados.count }}</span>
+                </button>
+            </div>
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 15px;">* Pronto podrás ver el listado detallado de tus favoritos y guardados aquí.</p>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

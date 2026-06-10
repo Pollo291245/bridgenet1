@@ -28,26 +28,30 @@
         <a href="/productos/" class="boton" style="text-decoration: none;">Explorar catálogo</a>
     </div>
     
-    <div class="carrusel-wrapper">
-        <button class="btn-flecha flecha-izq" onclick="moverCarrusel('carrusel-productos', -320)">❮</button>
-        
-        <div class="carrusel-contenedor" id="carrusel-productos">
-            {% for producto in productos %}
-                <article class="tarjeta">
-                    <div class="etiqueta">{{ producto.categoria }}</div>
-                    <h3>{{ producto.nombre_producto }}</h3>
-                    <p class="empresa-info">{{ producto.empresa_id.nombre }}</p>
-                    <div class="tarjeta-footer">
-                        <span class="precio">${{ producto.precio }}</span>
-                        <button style="background:none; border:1px solid var(--color-borde); padding:5px 10px; border-radius:5px; cursor:pointer;">♡</button>
-                    </div>
-                </article>
-            {% empty %}
-                <div style="width: 100%; text-align: center; padding: 40px; background-color: var(--color-tarjeta); border: 1px dashed var(--color-borde); border-radius: 10px;">
-                    <h3 style="color: var(--color-texto-claro); margin-bottom: 10px;">Aún no hay productos en el catálogo</h3>
+    <div class="carrusel-contenedor" id="carrusel-productos">
+    {% for producto in productos %}
+        <article class="tarjeta">
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre_producto }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 5px; margin-bottom: 10px;">
+            {% else %}
+                <div style="width: 100%; height: 150px; background-color: #e2e8f0; border-radius: 5px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #94a3b8;">
+                    📷
                 </div>
-            {% endfor %}
-        </div>
+            {% endif %}
+
+            <div class="etiqueta">{{ producto.get_categoria_display }}</div>
+            <h3>{{ producto.nombre_producto }}</h3>
+            <p class="empresa-info">{{ producto.empresa.nombre }}</p>
+            
+            <div class="tarjeta-footer">
+                <span class="precio">${{ producto.precio }}</span>
+                
+                <a href="{% url 'products:detalle' producto.pk %}" class="boton" style="padding: 5px 10px; font-size: 0.8rem; text-decoration: none;">Ver detalles</a>
+            </div>
+        </article>
+    {% empty %}
+        {% endfor %}
+</div>
 
         <button class="btn-flecha flecha-der" onclick="moverCarrusel('carrusel-productos', 320)">❯</button>
     </div>
@@ -56,7 +60,7 @@
 <section class="seccion-contenedor" style="background-color: #ffffff;">
     <div class="seccion-header">
         <h2>Empresas <span>destacadas</span></h2>
-        <a href="/empresas/" class="boton" style="text-decoration: none;">Ver directorio completo</a>
+        <a href="{% url 'enterprises:lista' %}" class="boton" style="text-decoration: none;">Ver directorio completo</a>
     </div>
 
     <div class="carrusel-wrapper">
@@ -70,7 +74,7 @@
                     </div>
                     <h3>{{ empresa.nombre }}</h3>
                     <p class="empresa-info">{{ empresa.area_produccion }}</p>
-                    <a href="#" class="btn-perfil" style="display: block;">Ver perfil</a>
+                    <a href="{% url 'enterprises:detalle' empresa.pk %}" class="btn-perfil" style="display: block;">Ver perfil</a>
                 </article>
             {% empty %}
                 <div style="width: 100%; text-align: center; padding: 40px; background-color: var(--color-fondo); border: 1px dashed var(--color-borde); border-radius: 10px;">

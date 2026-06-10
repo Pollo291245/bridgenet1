@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar perfil - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card">
+        <h1>Editar perfil</h1>
+        <p>Actualiza los datos del usuario administrador.</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="field-group">
+                <label for="id_username">Usuario</label>
+                {{ form.username }}
+            </div>
+            <div class="field-group two-cols">
+                <div>
+                    <label for="id_first_name">Nombre</label>
+                    {{ form.first_name }}
+                </div>
+                <div>
+                    <label for="id_last_name">Apellido</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="id_email">Correo</label>
+                {{ form.email }}
+            </div>
+
+            <button type="submit" class="auth-button">Guardar cambios</button>
+        </form>
+
+        <p class="auth-link"><a href="{% url 'perfil' %}">Volver al perfil</a></p>
+    </div>
+</section>
+{% endblock %}

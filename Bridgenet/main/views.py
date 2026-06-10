@@ -1,11 +1,11 @@
 from django.shortcuts import render
 
+from enterprises.models import Empresa
 from products.models import Producto
-from enterprises.models import Enterprise
 
 def inicio(request):
     productos_aleatorios = Producto.objects.all().order_by('?')[:12]
-    empresas_aleatorias = Enterprise.objects.all().order_by('?')[:12]
+    empresas_aleatorias = Empresa.objects.all().order_by('?')[:12]
 
     context = {
         'productos': productos_aleatorios,

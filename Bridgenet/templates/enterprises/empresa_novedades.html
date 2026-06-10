@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Novedades de {{ empresa.nombre }} - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="seccion-contenedor">
+    <div class="seccion-header" style="margin-bottom: 30px;">
+        <div>
+            <h2>Novedades de <span>{{ empresa.nombre }}</span></h2>
+            <p style="color: var(--color-texto-claro); margin-top: 5px;">Mantente al día con las últimas actualizaciones de esta empresa.</p>
+        </div>
+        <a href="{% url 'enterprises:detalle' empresa.pk %}" class="boton" style="background-color: transparent; border: 1px solid var(--color-principal); color: var(--color-principal); text-decoration: none;">Volver al perfil</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto;">
+        
+        <div style="text-align: center; padding: 50px; background-color: var(--color-tarjeta); border: 1px dashed var(--color-borde); border-radius: 10px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">📰</div>
+                <h3 style="color: var(--color-texto-claro); margin-bottom: 10px;">Aún no hay novedades</h3>
+                <p>Esta empresa no ha publicado actualizaciones recientemente.</p>
+            </div>
+        </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Empresa - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card" style="max-width: 600px;">
+        <h1>Editar perfil de la empresa</h1>
+        <p>Actualiza la información pública de tu organización.</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="field-group">
+                <label for="{{ form.nombre.id_for_label }}">Nombre de la empresa</label>
+                {{ form.nombre }}
+            </div>
+            
+            <div class="field-group two-cols">
+                <div>
+                    <label for="{{ form.area_produccion.id_for_label }}">Área de producción</label>
+                    {{ form.area_produccion }}
+                </div>
+                <div>
+                    <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                    {{ form.telefono }}
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="{{ form.email.id_for_label }}">Correo de contacto</label>
+                {{ form.email }}
+            </div>
+            
+            <div class="field-group">
+                <label for="{{ form.direccion.id_for_label }}">Dirección física</label>
+                {{ form.direccion }}
+            </div>
+
+            <div class="field-group">
+                <label for="{{ form.sitio_web.id_for_label }}">Sitio Web (opcional)</label>
+                {{ form.sitio_web }}
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button type="submit" class="auth-button" style="flex: 1;">Guardar cambios</button>
+                <a href="{% url 'enterprises:detalle' object.pk %}" class="auth-button secondary" style="flex: 1; text-align: center; text-decoration: none;">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

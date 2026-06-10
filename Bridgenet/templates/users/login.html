@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesión - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card">
+        <h1>Iniciar sesión</h1>
+        <p>Accede con tu usuario administrador para gestionar tu empresa.</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="field-group">
+                <label for="id_username">Usuario</label>
+                {{ form.username }}
+            </div>
+            <div class="field-group">
+                <label for="id_password">Contraseña</label>
+                {{ form.password }}
+            </div>
+            <button type="submit" class="auth-button">Entrar</button>
+        </form>
+
+        <p class="auth-link">¿No tienes empresa? <a href="{% url 'registro' %}">Regístrala aquí</a></p>
+    </div>
+</section>
+{% endblock %}

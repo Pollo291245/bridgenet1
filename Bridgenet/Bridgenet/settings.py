@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
     'enterprises',
+    'users',
     'products',
     'publications',
     'main',
@@ -125,4 +125,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'users.User'
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'perfil'
+LOGOUT_REDIRECT_URL = 'inicio'

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Producto - BridgeNet{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card" style="max-width: 600px;">
+        <h1>Editar Producto</h1>
+        <p>Actualiza la información, precio y stock de este artículo.</p>
+
+        <form method="post" class="auth-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="field-group">
+                <label for="{{ form.nombre_producto.id_for_label }}">Nombre del producto</label>
+                {{ form.nombre_producto }}
+            </div>
+
+            <div class="field-group">
+                <label for="{{ form.imagen.id_for_label }}">Imagen del producto (Opcional)</label>
+                {{ form.imagen }}
+            </div>
+            
+            <div class="field-group">
+                <label for="{{ form.categoria.id_for_label }}">Categoría</label>
+                {{ form.categoria }}
+            </div>
+
+            <div class="field-group">
+                <label for="{{ form.descripcion_producto.id_for_label }}">Descripción detallada</label>
+                {{ form.descripcion_producto }}
+            </div>
+            
+            <div class="field-group two-cols">
+                <div>
+                    <label for="{{ form.precio.id_for_label }}">Precio unitario ($)</label>
+                    {{ form.precio }}
+                </div>
+                <div>
+                    <label for="{{ form.stock_disponible.id_for_label }}">Stock disponible</label>
+                    {{ form.stock_disponible }}
+                </div>
+            </div>
+
+            <div class="field-group two-cols">
+                <div>
+                    <label for="{{ form.cantidad_minima_pedido.id_for_label }}">Pedido mínimo</label>
+                    {{ form.cantidad_minima_pedido }}
+                </div>
+                <div>
+                    <label for="{{ form.unidad_medida.id_for_label }}">Unidad (ej. Kg, Cajas)</label>
+                    {{ form.unidad_medida }}
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button type="submit" class="auth-button" style="flex: 1;">Guardar producto</button>
+                
+                {% if object %}
+                    <!-- Botón Cancelar si estamos EDITANDO -->
+                    <a href="{% url 'products:detalle' object.pk %}" class="auth-button secondary" style="flex: 1; text-align: center; text-decoration: none;">Cancelar</a>
+                {% else %}
+                    <!-- Botón Cancelar si estamos CREANDO -->
+                    <a href="{% url 'products:lista' %}" class="auth-button secondary" style="flex: 1; text-align: center; text-decoration: none;">Cancelar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

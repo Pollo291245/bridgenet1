@@ -1,8 +1,10 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Enterprise, EmpresasFavoritas
+from .models import Empresa, EmpresaFavorita, MiembroEmpresa, ValoracionEmpresa
 
-admin.site.register(Enterprise)
-admin.site.register(EmpresasFavoritas)
+admin.site.register(Empresa)
+admin.site.register(EmpresaFavorita)
+admin.site.register(MiembroEmpresa)
+admin.site.register(ValoracionEmpresa)
 
