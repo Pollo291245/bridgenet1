@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BridgeNet B2B{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">BridgeNet</div>
+            <ul class="nav-links">
+                <li><a href="/" class="activo">Inicio</a></li>
+                <li><a href="/empresas/">Empresas</a></li>
+                <li><a href="#">Productos</a></li>
+                <li><a href="#">Novedades</a></li>
+            </ul>
+            <div class="user-actions">
+                <a href="#" class="btn-registro">Registrar empresa</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h2 style="margin-bottom: 15px;">BridgeNet</h2>
+                <p style="color: #cbd5e1; font-size: 0.9rem;">Plataforma B2B que conecta empresas proveedoras y compradoras en Chile. Encuentra, evalúa y negocia en un solo lugar.</p>
+            </div>
+            <div class="footer-col">
+                <h4>PLATAFORMA</h4>
+                <ul>
+                    <li><a href="#">Buscar empresas</a></li>
+                    <li><a href="#">Buscar productos</a></li>
+                    <li><a href="#">Novedades</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>MI CUENTA</h4>
+                <ul>
+                    <li><a href="#">Mi perfil</a></li>
+                    <li><a href="#">Mis publicaciones</a></li>
+                    <li><a href="#">Favoritos</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>SOPORTE</h4>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BridgeNet — Todos los derechos reservados</p>
+            <p>Chile | Español</p>
+        </div>
+    </footer>
+
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

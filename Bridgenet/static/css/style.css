@@ -1,0 +1,312 @@
+/* --- VARIABLES Y RESET --- */
+:root {
+    --color-principal: #003d6b;
+    --color-secundario: #005a9c;
+    --color-acento: #4fa1d8;
+    --color-fondo: #f5f7fa;
+    --color-tarjeta: #ffffff;
+    --color-texto: #333333;
+    --color-borde: #e5e7eb;
+    --color-texto-claro: #6b7280;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-secundario);
+}
+
+/* --- HEADER Y NAVEGACIÓN --- */
+header {
+    background-color: var(--color-principal);
+    padding: 0 5%;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.logo {
+    color: var(--color-tarjeta);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    color: #cbd5e1;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.activo {
+    color: var(--color-tarjeta);
+}
+
+.btn-registro {
+    background-color: transparent;
+    color: var(--color-tarjeta);
+    border: 1px solid var(--color-tarjeta);
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-registro:hover {
+    background-color: var(--color-tarjeta);
+    color: var(--color-principal);
+}
+
+/* --- HERO SECTION (Solo para inicio) --- */
+.hero {
+    background-color: var(--color-principal);
+    color: var(--color-tarjeta);
+    padding: 60px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-texto h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.hero-texto p {
+    font-size: 1.1rem;
+    color: #e2e8f0;
+    max-width: 600px;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 40px;
+}
+
+.stat-item h3 {
+    font-size: 2rem;
+    color: var(--color-tarjeta);
+}
+
+.stat-item span {
+    font-size: 0.8rem;
+    color: var(--color-acento);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- SECCIONES Y TARJETAS --- */
+.seccion-contenedor {
+    padding: 50px 5%;
+}
+
+.seccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--color-borde);
+    padding-bottom: 10px;
+}
+
+.seccion-header h2 {
+    color: var(--color-principal);
+}
+
+.seccion-header h2 span {
+    color: var(--color-acento);
+}
+
+/* Grid para las tarjetas */
+.grid-tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.tarjeta {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+}
+
+.etiqueta {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--color-acento);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.tarjeta h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: var(--color-principal);
+}
+
+.tarjeta p.empresa-info {
+    font-size: 0.9rem;
+    color: var(--color-texto-claro);
+    margin-bottom: 15px;
+}
+
+.tarjeta-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-borde);
+    padding-top: 15px;
+}
+
+.precio {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-principal);
+}
+
+.btn-perfil {
+    width: 100%;
+    text-align: center;
+    border: 1px solid var(--color-secundario);
+    color: var(--color-secundario);
+    padding: 8px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.btn-perfil:hover {
+    background-color: var(--color-secundario);
+    color: var(--color-tarjeta);
+}
+
+/* --- FOOTER --- */
+footer {
+    background-color: var(--color-principal);
+    color: var(--color-tarjeta);
+    padding: 50px 5% 20px;
+    margin-top: 50px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-col h4 {
+    color: var(--color-tarjeta);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+.footer-col ul li {
+    margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+/* --- ESTILOS DEL CARRUSEL --- */
+.carrusel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* El contenedor que esconde el scroll */
+.carrusel-contenedor {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    scroll-behavior: smooth; /* Movimiento suave */
+    padding: 10px 0 20px 0;
+    scrollbar-width: none; /* Oculta la barra en Firefox */
+}
+
+/* Oculta la barra de scroll en Chrome/Edge/Safari */
+.carrusel-contenedor::-webkit-scrollbar {
+    display: none;
+}
+
+/* Forzamos a que las tarjetas no se encojan dentro del carrusel */
+.carrusel-contenedor .tarjeta {
+    min-width: 280px; 
+    flex: 0 0 auto; 
+}
+
+/* Botones de flecha flotantes */
+.btn-flecha {
+    background-color: var(--color-tarjeta);
+    color: var(--color-principal);
+    border: 1px solid var(--color-borde);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
+
+.btn-flecha:hover {
+    background-color: var(--color-principal);
+    color: var(--color-tarjeta);
+}
+
+/* Posicionamiento de las flechas para que sobresalgan a los lados */
+.flecha-izq { left: -20px; }
+.flecha-der { right: -20px; }
