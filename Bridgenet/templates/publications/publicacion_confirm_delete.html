@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h4>
+                </div>
+                <div class="card-body text-center p-4">
+                    <h5 class="card-title">¿Estás seguro de que deseas eliminar esta publicación?</h5>
+                    <p class="text-muted mt-3">
+                        Estás a punto de borrar la novedad: <br>
+                        <strong class="fs-5">"{{ object.titulo }}"</strong>
+                    </p>
+                    
+                    <div class="alert alert-warning mt-4 text-start">
+                        <i class="fas fa-info-circle me-2"></i> 
+                        <strong>Atención:</strong> Esta acción no se puede deshacer. Se eliminará la publicación y todos los comentarios asociados a ella.
+                    </div>
+
+                    <form method="post" class="mt-4 d-flex justify-content-center gap-3">
+                        {% csrf_token %}
+                        <!-- Botón para cancelar y volver al detalle de la publicación -->
+                        <a href="{% url 'publications:detalle' object.pk %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        
+                        <!-- Botón para confirmar el borrado -->
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Sí, eliminar publicación
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

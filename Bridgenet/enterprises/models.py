@@ -61,6 +61,7 @@ class MiembroEmpresa(models.Model):
     rol = models.CharField(max_length=20, choices=rol_choices.choices, default=rol_choices.EDITOR)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    es_responsable_chat = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Miembro de empresa"

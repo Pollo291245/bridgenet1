@@ -1,25 +1,66 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Novedades de {{ empresa.nombre }} - BridgeNet{% endblock %}
 
 {% block content %}
-<section class="seccion-contenedor">
-    <div class="seccion-header" style="margin-bottom: 30px;">
+<div class="container mt-5">
+    <!-- Cabecera de la sección -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
         <div>
-            <h2>Novedades de <span>{{ empresa.nombre }}</span></h2>
-            <p style="color: var(--color-texto-claro); margin-top: 5px;">Mantente al día con las últimas actualizaciones de esta empresa.</p>
+            <h2 class="mb-0"><i class="fas fa-bullhorn text-primary me-2"></i> Novedades de {{ empresa.nombre }}</h2>
+            <p class="text-muted mt-1 mb-0">Mantente al día con las últimas noticias y lanzamientos.</p>
         </div>
-        <a href="{% url 'enterprises:detalle' empresa.pk %}" class="boton" style="background-color: transparent; border: 1px solid var(--color-principal); color: var(--color-principal); text-decoration: none;">Volver al perfil</a>
+        
+        <div>
+            <a href="{% url 'enterprises:detalle' empresa.pk %}" class="btn btn-outline-secondary shadow-sm me-2">
+                <i class="fas fa-building"></i> Perfil
+            </a>
+            <!-- Botón protegido para crear nueva publicación -->
+            {% if puede_editar %}
+                <a href="{% url 'publications:crear' %}" class="btn btn-success shadow-sm">
+                    <i class="fas fa-plus"></i> Publicar Novedad
+                </a>
+            {% endif %}
+        </div>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto;">
-        
-        <div style="text-align: center; padding: 50px; background-color: var(--color-tarjeta); border: 1px dashed var(--color-borde); border-radius: 10px;">
-                <div style="font-size: 3rem; margin-bottom: 15px;">📰</div>
-                <h3 style="color: var(--color-texto-claro); margin-bottom: 10px;">Aún no hay novedades</h3>
-                <p>Esta empresa no ha publicado actualizaciones recientemente.</p>
-            </div>
+    <!-- Lista de Novedades -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            {% for novedad in novedades %}
+                <div class="card shadow-sm border-0 mb-4 rounded-3">
+                    {% if novedad.imagen %}
+                        <img src="{{ novedad.imagen.url }}" class="card-img-top" alt="{{ novedad.titulo }}" style="height: 250px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-info text-dark">{{ novedad.tipo_novedad }}</span>
+                            <small class="text-muted"><i class="fas fa-clock"></i> {{ novedad.fecha_publicacion|date:"d M Y" }}</small>
+                        </div>
+                        
+                        <h4 class="card-title fw-bold mt-2">{{ novedad.titulo }}</h4>
+                        
+                        <!-- Mostramos un resumen del contenido (solo las primeras 30 palabras) -->
+                        <p class="card-text text-secondary mt-3">
+                            {{ novedad.contenido|truncatewords:30 }}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a href="{% url 'publications:detalle' novedad.pk %}" class="btn btn-outline-primary">
+                                Leer más <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                            <span class="text-muted small">
+                                <i class="fas fa-comments"></i> {{ novedad.comentarios_publicacion.count }} comentarios
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center py-5 bg-light rounded-3 border">
+                    <i class="fas fa-newspaper fa-4x text-muted mb-3"></i>
+                    <h4 class="text-secondary">Sin novedades recientes</h4>
+                    <p class="text-muted">Esta empresa aún no ha publicado ninguna noticia o actualización.</p>
+                </div>
+            {% endfor %}
         </div>
-</section>
+    </div>
+</div>
 {% endblock %}

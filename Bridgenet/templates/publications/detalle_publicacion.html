@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <a href="{% url 'publications:lista' %}" class="btn btn-outline-secondary mb-4 shadow-sm">
+                <i class="fas fa-arrow-left"></i> Volver a Novedades
+            </a>
+
+            <div class="card shadow-lg border-0 rounded-3">
+                
+                {% if publicacion.imagen %}
+                    <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}" style="max-height: 400px; object-fit: cover;">
+                {% endif %}
+
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-info text-dark mb-2">{{ publicacion.tipo_novedad }}</span>
+                            <h1 class="display-5 fw-bold text-dark">{{ publicacion.titulo }}</h1>
+                        </div>
+                    </div>
+                    
+                    <p class="text-muted mb-4 border-bottom pb-3">
+                        <i class="fas fa-building me-1"></i> Publicado por <a href="{% url 'enterprises:detalle' publicacion.empresa.pk %}" class="text-decoration-none fw-bold">{{ publicacion.empresa.nombre }}</a> 
+                        &nbsp;|&nbsp; 
+                        <i class="fas fa-calendar-alt me-1"></i> {{ publicacion.fecha_publicacion|date:"d M Y, H:i" }}
+                    </p>
+
+                    <div class="fs-5 text-secondary" style="line-height: 1.8;">
+                        {{ publicacion.contenido|linebreaks }}
+                    </div>
+
+                    {% if publicacion.producto_referido %}
+                        <div class="alert alert-primary mt-4 d-flex align-items-center" role="alert">
+                            <i class="fas fa-box-open fa-2x me-3"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Producto Destacado en esta publicación</h5>
+                                <a href="{% url 'products:detalle' publicacion.producto_referido.pk %}" class="alert-link stretched-link">{{ publicacion.producto_referido.nombre_producto }}</a>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if puede_editar %}
+                        <div class="d-flex justify-content-end mt-5 pt-3 border-top">
+                            <a href="{% url 'publications:editar' publicacion.pk %}" class="btn btn-warning me-2 shadow-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'publications:eliminar' publicacion.pk %}" class="btn btn-danger shadow-sm">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+
+                        </div>
+                    {% endif %}
+
+                    <div class="mt-5 pt-4 border-top">
+                        <h4 class="mb-4"><i class="fas fa-comments text-primary me-2"></i> Comentarios ({{ comentarios.count }})</h4>
+                        
+                        {% if user.is_authenticated %}
+                            <div class="card bg-light border-0 mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <form action="{% url 'publications:agregar_comentario' publicacion.pk %}" method="post">
+                                        {% csrf_token %}
+                                        {{ comentario_form }}
+                                        <div class="d-flex justify-content-end mt-2">
+                                            <button type="submit" class="btn btn-primary shadow-sm">
+                                                Publicar Comentario <i class="fas fa-paper-plane ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-secondary">
+                                Debes <a href="{% url 'login' %}">iniciar sesión</a> con tu cuenta corporativa para dejar un comentario.
+                            </div>
+                        {% endif %}
+
+                        <div class="comentarios-lista">
+                            {% for comentario in comentarios %}
+                                <div class="d-flex mb-4">
+                                    <div class="me-3">
+                                        <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="bg-light p-3 rounded-3 shadow-sm">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <h6 class="fw-bold mb-0 text-primary">
+                                                    <a href="{% url 'enterprises:detalle' comentario.autor.pk %}" class="text-decoration-none">{{ comentario.autor.nombre }}</a>
+                                                </h6>
+                                                <small class="text-muted">{{ comentario.fecha_comentario|date:"d M Y, H:i" }}</small>
+                                            </div>
+                                            <p class="mb-0 text-secondary">{{ comentario.comentario|linebreaksbr }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted text-center py-4 bg-light rounded-3">Aún no hay comentarios. ¡Sé la primera empresa en opinar!</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

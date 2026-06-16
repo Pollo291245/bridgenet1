@@ -1,13 +1,17 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 from .models import Empresa
+from .models import Empresa, MiembroEmpresa
+
+User = get_user_model()
 
 class EmpresaForm(forms.ModelForm):
     class Meta:
         model = Empresa
-        # Campos editables de la empresa
-        fields = ['nombre', 'area_produccion', 'email', 'direccion', 'sitio_web', 'telefono']
-        
+        fields = ['rut', 'nombre', 'area_produccion', 'email', 'direccion', 'sitio_web', 'telefono']
         widgets = {
+            'rut': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '12.345.678-9'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'area_produccion': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -15,4 +19,35 @@ class EmpresaForm(forms.ModelForm):
             'sitio_web': forms.URLInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
         }
-        
+
+class AdminUserForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+class AgregarMiembroForm(UserCreationForm):
+    rol = forms.ChoiceField(
+        choices=MiembroEmpresa.rol_choices.choices,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    es_responsable_chat = forms.BooleanField(
+        required=False,
+        label="¿Asignar como responsable del chat de la empresa?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }

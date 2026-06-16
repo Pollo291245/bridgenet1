@@ -37,6 +37,7 @@
                 {% endif %}
             </div>
         </div>
+        
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
             <div>
@@ -44,6 +45,7 @@
                 <p><strong>RUT:</strong> {{ empresa.rut }}</p>
                 <p><strong>Tamaño:</strong> {{ empresa.get_tamano_empresa_display }}</p>
                 <p><strong>Dirección:</strong> {{ empresa.direccion }}</p>
+                <p><strong>Área de Producción:</strong> {{ empresa.area_produccion }}</p>
             </div>
             <div>
                 <h3 style="margin-bottom: 10px; color: var(--color-principal);">Contacto</h3>
@@ -51,6 +53,12 @@
                 <p><strong>Teléfono:</strong> {{ empresa.telefono }}</p>
                 {% if empresa.sitio_web %}
                     <p><strong>Sitio Web:</strong> <a href="{{ empresa.sitio_web }}" target="_blank">Visitar sitio</a></p>
+                {% endif %}
+
+                {% if es_admin %}
+                    <a href="{% url 'enterprises:panel_admin' empresa.pk %}" class="btn btn-warning shadow-sm">
+                        <i class="fas fa-cogs"></i> Panel de Administración
+                    </a>
                 {% endif %}
             </div>
         </div>

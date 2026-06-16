@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        {% if object %}
+                            <i class="fas fa-edit"></i> Editar Publicación
+                        {% else %}
+                            <i class="fas fa-plus-circle"></i> Crear Nueva Publicación
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- enctype es vital para que las imágenes se suban correctamente -->
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                                
+                                <!-- Renderizamos el campo con clases de Bootstrap si no las tiene por defecto -->
+                                {% if field.name == 'contenido' %}
+                                    <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" rows="5" class="form-control" required>{% if field.value %}{{ field.value }}{% endif %}</textarea>
+                                {% elif field.name == 'imagen' %}
+                                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" accept="image/*">
+                                    {% if object and object.imagen %}
+                                        <small class="text-muted mt-1 d-block">Imagen actual: <a href="{{ object.imagen.url }}" target="_blank">Ver imagen</a></small>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" value="{% if field.value %}{{ field.value }}{% endif %}" {% if field.field.required %}required{% endif %}>
+                                {% endif %}
+                                
+                                {% if field.help_text %}
+                                    <div class="form-text text-muted small">{{ field.help_text|striptags }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1 fw-bold">{{ field.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                            <!-- Botón de cancelar dinámico -->
+                            {% if object %}
+                                <a href="{% url 'publications:detalle' object.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+                            {% else %}
+                                <a href="{% url 'publications:lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+                            {% endif %}
+                            
+                            <button type="submit" class="btn btn-success px-4">
+                                {% if object %}Guardar Cambios{% else %}Publicar Novedad{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

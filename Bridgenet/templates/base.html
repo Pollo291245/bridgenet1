@@ -5,25 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BridgeNet B2B{% endblock %}</title>
+
+    <!-- 1. BOOTSTRAP 5 CSS (Para la estructura, tarjetas y botones) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 2. FONTAWESOME (Para los íconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- 3. TU CSS PERSONALIZADO (Siempre al final para que no sea sobreescrito) -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     <header>
         <nav class="navbar">
             <div class="logo">BridgeNet</div>
             <ul class="nav-links">
-                <li><a href="{% url 'inicio' %}" class="activo">Inicio</a></li>
+                <li><a href="{% url 'inicio' %}">Inicio</a></li>
                 <li><a href="{% url 'enterprises:lista' %}">Empresas</a></li>
                 <li><a href="{% url 'products:lista' %}">Productos</a></li>
-                <li><a href="#">Novedades</a></li> </ul>
+                <li><a href="{% url 'publications:lista' %}">Novedades</a></li>
+            </ul>
             <div class="user-actions" style="display: flex; gap: 10px; align-items: center;">
                 {% if user.is_authenticated %}
                     <a href="{% url 'perfil' %}" class="nav-link-plain">Mi Perfil</a>
+                    
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-registro" style="background: none; border: 1px solid #cbd5e1; color: #64748b; cursor: pointer; padding: 5px 15px;">Salir</button>
+                    </form>
                 {% else %}
-                    {#<a href="{% url 'login' %}" class="btn-registro" style="border-color: white; color: white;">Entrar</a>#}
-                    {#<a href="{% url 'registro' %}" class="btn-registro">Registrar empresa</a>#}
-
                     <a href="{% url 'login' %}" class="nav-link-plain">Entrar</a>
                     <a href="{% url 'registro' %}" class="btn-registro" style="background-color: var(--color-acento); border-color: var(--color-acento); color: white;">Registrar empresa</a>
                 {% endif %}
@@ -31,12 +42,13 @@
         </nav>
     </header>
 
-    <main>
+    <!-- Agregamos flex-grow-1 para que el footer siempre se quede abajo aunque no haya contenido -->
+    <main class="flex-grow-1">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer>
+    <footer class="mt-auto">
         <div class="footer-grid">
             <div class="footer-col">
                 <h2 style="margin-bottom: 15px;">BridgeNet</h2>
@@ -45,17 +57,22 @@
             <div class="footer-col">
                 <h4>PLATAFORMA</h4>
                 <ul>
-                    <li><a href="#">Buscar empresas</a></li>
-                    <li><a href="#">Buscar productos</a></li>
-                    <li><a href="#">Novedades</a></li>
+                    <li><a href="{% url 'enterprises:lista' %}">Buscar empresas</a></li>
+                    <li><a href="{% url 'products:lista' %}">Buscar productos</a></li>
+                    <li><a href="{% url 'publications:lista' %}">Novedades</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>MI CUENTA</h4>
                 <ul>
-                    <li><a href="#">Mi perfil</a></li>
-                    <li><a href="#">Mis publicaciones</a></li>
-                    <li><a href="#">Favoritos</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'perfil' %}">Mi perfil</a></li>
+                        <!-- Cambia el link del panel aquí cuando esté listo para cada usuario -->
+                        <li><a href="{% url 'perfil' %}">Panel de Empresa</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+                        <li><a href="{% url 'registro' %}">Crear cuenta corporativa</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="footer-col">
@@ -71,6 +88,9 @@
             <p>Chile | Español</p>
         </div>
     </footer>
+
+    <!-- BOOTSTRAP JS (Obligatorio para que funcionen los modales como el de valorar productos) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     {% block scripts %}
     {% endblock %}

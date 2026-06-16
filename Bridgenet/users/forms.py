@@ -4,6 +4,9 @@ from enterprises.models import Empresa
 
 from .models import User
 
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import get_user_model
+
 
 class EmpresaRegistroForm(forms.Form):
     username = forms.CharField(label='Usuario administrador', max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -58,3 +61,14 @@ class PerfilForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+
+class EmailAuthenticationForm(AuthenticationForm):
+    username = forms.EmailField(
+        label="Correo Electrónico",
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'autofocus': True})
+    )
+    password = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )

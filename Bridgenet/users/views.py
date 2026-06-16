@@ -7,11 +7,13 @@ from django.shortcuts import redirect, render
 
 from enterprises.models import Empresa, MiembroEmpresa
 
-from .forms import EmpresaRegistroForm, PerfilForm
+from .forms import EmpresaRegistroForm, PerfilForm, AuthenticationForm
+
 
 
 class InicioSesionView(LoginView):
     template_name = 'users/login.html'
+    form_class = AuthenticationForm
     redirect_authenticated_user = True
 
 
@@ -27,6 +29,8 @@ def registro(request):
         form = EmpresaRegistroForm(request.POST)
         if form.is_valid():
             UserModel = get_user_model()
+            email_usuario = form.cleaned_data['email']
+            
             with transaction.atomic():
                 empresa = Empresa.objects.create(
                     rut=form.cleaned_data['rut'],
@@ -37,17 +41,23 @@ def registro(request):
                     sitio_web=form.cleaned_data['sitio_web'],
                     telefono=form.cleaned_data['telefono'],
                 )
+                
                 user = UserModel.objects.create_user(
-                    username=form.cleaned_data['username'],
+                    username=email_usuario, 
                     first_name=form.cleaned_data['first_name'],
                     last_name=form.cleaned_data['last_name'],
-                    email=form.cleaned_data['email'],
+                    email=email_usuario, # Usamos el email aquí también
                     password=form.cleaned_data['password1'],
-                    empresa_rel=empresa,
                 )
-                MiembroEmpresa.objects.create(empresa=empresa, usuario=user, rol=MiembroEmpresa.rol_choices.ADMIN)
+                
+                MiembroEmpresa.objects.create(
+                    empresa=empresa, 
+                    usuario=user, 
+                    rol=MiembroEmpresa.rol_choices.ADMIN,
+                    es_responsable_chat=True 
+                )
 
-            messages.success(request, 'La empresa y su usuario administrador fueron creados correctamente.')
+            messages.success(request, 'La empresa y su usuario administrador fueron creados correctamente. Ahora puedes iniciar sesión con tu correo.')
             return redirect('login')
     else:
         form = EmpresaRegistroForm()
@@ -57,8 +67,9 @@ def registro(request):
 
 @login_required
 def perfil(request):
-    empresa = request.user.empresa_rel
     membresia = request.user.empresas_miembro.select_related('empresa').first()
+    empresa = membresia.empresa if membresia else None
+    
     return render(request, 'users/perfil.html', {
         'usuario': request.user,
         'empresa': empresa,

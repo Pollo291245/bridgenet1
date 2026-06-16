@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h2><i class="fas fa-chart-line text-primary"></i> Panel de Administración: {{ empresa.nombre }}</h2>
+        <a href="{% url 'enterprises:detalle' empresa.pk %}" class="btn btn-outline-secondary shadow-sm">
+            <i class="fas fa-arrow-left"></i> Volver al Perfil
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary shadow h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0 text-uppercase text-white-50">Usuarios</h6>
+                            <h2 class="my-2 display-6 fw-bold">{{ total_usuarios }}</h2>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success shadow h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0 text-uppercase text-white-50">Productos</h6>
+                            <h2 class="my-2 display-6 fw-bold">{{ total_productos }}</h2>
+                        </div>
+                        <i class="fas fa-box-open fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info shadow h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0 text-uppercase text-white-50">Publicaciones</h6>
+                            <h2 class="my-2 display-6 fw-bold">{{ total_publicaciones }}</h2>
+                        </div>
+                        <i class="fas fa-newspaper fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-dark bg-warning shadow h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0 text-uppercase text-dark-50">Interacciones</h6>
+                            <p class="mb-0 mt-2 fw-bold"><i class="fas fa-star"></i> {{ total_valoraciones_recibidas }} Valoraciones</p>
+                            <p class="mb-0 fw-bold"><i class="fas fa-heart text-danger"></i> {{ veces_marcada_favorita }} Favoritos</p>
+                        </div>
+                        <i class="fas fa-chart-pie fa-3x opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 fw-bold text-secondary">Miembros de la Empresa</h5>
+                    <button class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Agregar Usuario</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Usuario</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Ingreso</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for miembro in ultimos_usuarios %}
+                                <tr>
+                                    <td class="ps-3 fw-bold">{{ miembro.usuario.username }}</td>
+                                    <td>{{ miembro.usuario.email }}</td>
+                                    <td>
+                                        <span class="badge {% if miembro.rol == 'admin' %}bg-danger{% elif miembro.rol == 'editor' %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ miembro.get_rol_display }}
+                                        </span>
+                                        {% if miembro.es_responsable_chat %}
+                                            <span class="badge bg-info text-dark ms-1" title="Responsable de Chat"><i class="fas fa-comments"></i></span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-muted small">{{ miembro.created_at|date:"d M Y" }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-secondary" title="Editar Rol"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No hay miembros registrados aún.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-secondary">Gestión Rápida</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="#" class="btn btn-outline-primary text-start p-3 fw-bold">
+                            <i class="fas fa-plus-circle fa-lg me-2"></i> Nuevo Producto
+                        </a>
+                        <a href="#" class="btn btn-outline-info text-start p-3 fw-bold">
+                            <i class="fas fa-bullhorn fa-lg me-2"></i> Crear Publicación
+                        </a>
+                        <a href="{% url 'enterprises:editar' empresa.pk %}" class="btn btn-outline-secondary text-start p-3 fw-bold">
+                            <i class="fas fa-cog fa-lg me-2"></i> Ajustes de Empresa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
