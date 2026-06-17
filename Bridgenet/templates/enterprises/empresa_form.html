@@ -7,41 +7,76 @@
 <section class="auth-shell">
     <div class="auth-card" style="max-width: 600px;">
         <h1>Editar perfil de la empresa</h1>
-        <p>Actualiza la información pública de tu organización.</p>
+        <p>Actualiza la información pública de tu organización y su logotipo.</p>
 
-        <form method="post" class="auth-form">
+        <form method="post" class="auth-form" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.non_field_errors }}
 
             <div class="field-group">
+                <label>RUT Comercial</label>
+                <input type="text" value="{{ object.rut }}" disabled style="background-color: #e2e8f0; border-color: #cbd5e1; color: #64748b; cursor: not-allowed; width: 100%; padding: 10px; border-radius: 5px; border-style: solid; border-width: 1px;">
+                <small style="color: #ef4444; font-size: 0.8rem; margin-top: 5px; display: block;">🔒 El RUT es un identificador legal y no puede modificarse.</small>
+            </div>
+
+            <div class="field-group">
+                <label>Logo de la empresa</label>
+                
+                <div id="dropzone" style="border: 2px dashed #cbd5e1; border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; background-color: #f8fafc; transition: all 0.2s ease; margin-top: 5px;">
+                    
+                    <div style="display: none;">
+                        {{ form.logo }}
+                    </div>
+
+                    <div id="dropzone-content">
+                        {% if object.logo %}
+                            <img id="logo-preview" src="{{ object.logo.url }}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; border: 1px solid #e2e8f0; padding: 5px; background: white; margin-bottom: 10px;">
+                            <p id="logo-text" style="color: #64748b; font-size: 0.9rem; margin: 0;">Haz clic o arrastra una nueva imagen para reemplazarla</p>
+                        {% else %}
+                            <img id="logo-preview" src="" style="width: 100px; height: 100px; object-fit: contain; border-radius: 8px; border: 1px solid #e2e8f0; padding: 5px; background: white; margin-bottom: 10px; display: none;">
+                            <span id="logo-icon" style="font-size: 2.5rem; display: block;">📸</span>
+                            <p id="logo-text" style="color: #64748b; font-size: 0.9rem; margin: 0;"><strong>Haz clic</strong> o arrastra tu logo aquí</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {{ form.logo.errors }}
+            </div>
+
+            <div class="field-group">
                 <label for="{{ form.nombre.id_for_label }}">Nombre de la empresa</label>
                 {{ form.nombre }}
+                {{ form.nombre.errors }}
             </div>
             
             <div class="field-group two-cols">
                 <div>
                     <label for="{{ form.area_produccion.id_for_label }}">Área de producción</label>
                     {{ form.area_produccion }}
+                    {{ form.area_produccion.errors }}
                 </div>
                 <div>
                     <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
                     {{ form.telefono }}
+                    {{ form.telefono.errors }}
                 </div>
             </div>
 
             <div class="field-group">
                 <label for="{{ form.email.id_for_label }}">Correo de contacto</label>
                 {{ form.email }}
+                {{ form.email.errors }}
             </div>
             
             <div class="field-group">
                 <label for="{{ form.direccion.id_for_label }}">Dirección física</label>
                 {{ form.direccion }}
+                {{ form.direccion.errors }}
             </div>
 
             <div class="field-group">
                 <label for="{{ form.sitio_web.id_for_label }}">Sitio Web (opcional)</label>
                 {{ form.sitio_web }}
+                {{ form.sitio_web.errors }}
             </div>
 
             <div style="display: flex; gap: 15px; margin-top: 20px;">
@@ -51,4 +86,55 @@
         </form>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoInput = document.getElementById('{{ form.logo.id_for_label }}');
+        const dropzone = document.getElementById('dropzone');
+        const preview = document.getElementById('logo-preview');
+        const logoIcon = document.getElementById('logo-icon');
+        const logoText = document.getElementById('logo-text');
+
+        function updatePreview(file) {
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    if (logoIcon) logoIcon.style.display = 'none';
+                    logoText.innerHTML = 'Imagen seleccionada: <strong>' + file.name + '</strong>';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        dropzone.addEventListener('click', () => logoInput.click());
+
+        logoInput.addEventListener('change', function(event) {
+            updatePreview(event.target.files[0]);
+        });
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#3b82f6';
+            dropzone.style.backgroundColor = '#eff6ff';
+        });
+
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#cbd5e1';
+            dropzone.style.backgroundColor = '#f8fafc';
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#cbd5e1';
+            dropzone.style.backgroundColor = '#f8fafc';
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                logoInput.files = e.dataTransfer.files;
+                updatePreview(e.dataTransfer.files[0]);
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -1,70 +1,168 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block title %}Mi Panel - BridgeNet{% endblock %}
 
 {% block content %}
-<section class="auth-shell">
-    <div class="auth-card" style="max-width: 750px; text-align: left;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-borde); padding-bottom: 15px; margin-bottom: 25px;">
-            <div>
-                <h1 style="margin-bottom: 5px;">Mi Panel de Control</h1>
-                <p style="color: #64748b; margin: 0;">Gestiona tus datos personales y tu actividad B2B.</p>
-            </div>
-                <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="boton" 
-                        style="background: transparent; border: 1px solid #ef4444; color: #ef4444; cursor: pointer; font-family: inherit; font-size: 1rem; padding: 8px 15px;">
-                        Cerrar sesión
-                    </button>
-                </form>        
-            </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-            
-            <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: var(--color-principal); margin: 0;">Mis Datos</h3>
-                    <a href="{% url 'editar_perfil' %}" style="font-size: 0.9rem; color: var(--color-principal); text-decoration: none;">✏️ Editar</a>
-                </div>
-                
-                <p style="margin-bottom: 8px;"><strong>Usuario:</strong> {{ user.username }}</p>
-                <p style="margin-bottom: 8px;"><strong>Nombre:</strong> {{ user.first_name|default:'-' }} {{ user.last_name|default:'' }}</p>
-                <p style="margin-bottom: 8px;"><strong>Correo:</strong> {{ user.email|default:'-' }}</p>
-            </div>
-
-            <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                <h3 style="color: var(--color-principal); margin-bottom: 15px;">Mi Organización</h3>
-                
-                {% if user.empresa_rel %}
-                    <p style="margin-bottom: 8px;"><strong>Empresa:</strong> {{ user.empresa_rel.nombre }}</p>
-                    <p style="margin-bottom: 8px;"><strong>RUT:</strong> {{ user.empresa_rel.rut }}</p>
-                    <p style="margin-bottom: 15px;"><strong>Área:</strong> {{ user.empresa_rel.area_produccion }}</p>
-                    
-                    <a href="{% url 'enterprises:detalle' user.empresa_rel.pk %}" class="boton" style="display: block; text-align: center; text-decoration: none;">Ir al Perfil de la Empresa</a>
-                {% else %}
-                    <p style="margin-bottom: 15px; color: #64748b;">No tienes ninguna empresa registrada ni asociada a esta cuenta.</p>
-                    <a href="{% url 'registro' %}" class="boton" style="display: block; text-align: center; background-color: #10b981; border-color: #10b981; text-decoration: none;">➕ Registrar Empresa</a>
-                {% endif %}
-            </div>
-
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fas fa-user-circle text-primary me-2"></i> Mi Perfil Personal</h2>
+            <p class="text-muted mb-0">Gestiona tu cuenta y tus intereses B2B.</p>
         </div>
-
-        <div style="margin-top: 30px; border-top: 1px solid var(--color-borde); padding-top: 25px;">
-            <h3 style="margin-bottom: 20px;">Mi Actividad</h3>
-            
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <button class="boton" style="background-color: transparent; border: 1px solid var(--color-borde); color: var(--color-texto); cursor: default;">
-                    Proveedores Seguidos <span style="background-color: var(--color-principal); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">{{ user.proveedores_favoritos.count }}</span>
-                </button>
-                
-                <button class="boton" style="background-color: transparent; border: 1px solid var(--color-borde); color: var(--color-texto); cursor: default;">
-                    Productos Guardados <span style="background-color: var(--color-principal); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">{{ user.productos_guardados.count }}</span>
-                </button>
-            </div>
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 15px;">* Pronto podrás ver el listado detallado de tus favoritos y guardados aquí.</p>
-        </div>
-
+        <form method="post" action="{% url 'logout' %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger shadow-sm fw-bold">
+                <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+            </button>
+        </form>
     </div>
-</section>
+
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">Mis Datos</h5>
+                    <a href="{% url 'editar_perfil' %}" class="btn btn-sm btn-light border text-primary fw-bold"><i class="fas fa-pen"></i> Editar</a>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">
+                            {{ user.username|make_list|first|upper }}
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">{{ user.first_name|default:user.username }} {{ user.last_name|default:'' }}</h5>
+                            <p class="text-muted mb-0">{{ user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-2 px-4">
+                    <h5 class="mb-0 fw-bold text-dark">Mi Organización</h5>
+                </div>
+                <div class="card-body px-4 pb-4 d-flex flex-column">
+                    {% if empresa %}
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-secondary bg-opacity-10 text-secondary rounded-3 d-flex justify-content-center align-items-center me-3" style="width: 50px; height: 50px;">
+                                <i class="fas fa-building fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">{{ empresa.nombre }} <span class="text-muted fw-normal ms-1">({{ empresa.rut }})</span></h6>
+                                <p class="text-muted mb-0 small">{{ empresa.area_produccion }}</p>
+                            </div>
+                        </div>
+                        
+                        <p class="mb-4">
+                            <strong>Mi Rol:</strong> 
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 ms-1">
+                                {{ membresia.get_rol_display }}
+                            </span>
+                        </p>
+                        
+                        <!-- NUEVO: Doble botón de navegación -->
+                        <div class="mt-auto d-flex flex-column gap-2">
+                            <!-- Botón 1: Ir al Panel de Administración -->
+                            <a href="{% url 'enterprises:panel_admin' empresa.pk %}" class="btn btn-primary w-100 shadow-sm fw-bold">
+                                <i class="fas fa-sliders-h me-1"></i> Panel de Administración
+                            </a>
+                            
+                            <!-- Botón 2: Ir a la vista pública del catálogo y novedades -->
+                            <a href="{% url 'enterprises:detalle' empresa.pk %}" class="btn btn-outline-secondary w-100 fw-bold">
+                                <i class="fas fa-external-link-alt me-1"></i> Ver Perfil Público
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center my-auto">
+                            <p class="text-muted mb-3">No tienes ninguna empresa asociada a tu cuenta.</p>
+                            <a href="{% url 'registro' %}" class="btn btn-success shadow-sm fw-bold px-4"><i class="fas fa-plus-circle me-1"></i> Registrar Empresa</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    <h4 class="fw-bold text-dark mb-4"><i class="fas fa-history text-secondary me-2"></i> Mi Actividad B2B</h4>
+    
+    <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold" data-bs-toggle="pill" data-bs-target="#pills-productos" type="button" role="tab">
+                <i class="fas fa-box-open me-1"></i> Productos Guardados ({{ user.productos_guardados.count|default:"0" }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#pills-proveedores" type="button" role="tab">
+                <i class="fas fa-handshake me-1"></i> Proveedores Seguidos ({{ user.proveedores_favoritos.count|default:"0" }})
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="pills-tabContent">
+        
+        <div class="tab-pane fade show active" id="pills-productos" role="tabpanel">
+            <div class="row">
+                {% for producto in user.productos_guardados.all %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 custom-hover">
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" class="card-img-top" style="height: 150px; object-fit: cover; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                            {% else %}
+                                <div class="bg-light d-flex justify-content-center align-items-center" style="height: 150px; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                                    <i class="fas fa-image fa-3x text-muted opacity-25"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body p-3 d-flex flex-column">
+                                <h6 class="fw-bold mb-1">{{ producto.nombre_producto|truncatechars:35 }}</h6>
+                                <p class="text-success fw-bold small mb-2">${{ producto.precio }}</p>
+                                <p class="text-muted small mb-3"><i class="fas fa-building"></i> {{ producto.empresa.nombre }}</p>
+                                <a href="{% url 'products:detalle' producto.pk %}" class="btn btn-sm btn-outline-primary mt-auto w-100">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5 bg-light rounded-4 border border-dashed">
+                        <i class="fas fa-box-open fa-3x text-muted mb-3 opacity-50"></i>
+                        <h5 class="text-secondary fw-bold">Sin productos guardados</h5>
+                        <p class="text-muted">Explora el catálogo global y guarda los productos que te interesen.</p>
+                        <a href="{% url 'products:lista' %}" class="btn btn-outline-primary shadow-sm mt-2">Explorar Catálogo</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-proveedores" role="tabpanel">
+            <div class="row">
+                {% for proveedor in user.proveedores_favoritos.all %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 custom-hover">
+                            <div class="card-body p-4 d-flex flex-column align-items-center text-center">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center mb-3" style="width: 70px; height: 70px; font-size: 1.5rem; font-weight: bold;">
+                                    {{ proveedor.nombre|make_list|first|upper }}
+                                </div>
+                                <h5 class="fw-bold mb-1">{{ proveedor.nombre }}</h5>
+                                <p class="text-muted small mb-3">{{ proveedor.area_produccion }}</p>
+                                <a href="{% url 'enterprises:detalle' proveedor.pk %}" class="btn btn-sm btn-outline-secondary mt-auto w-100">Visitar Perfil</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5 bg-light rounded-4 border border-dashed">
+                        <i class="fas fa-building fa-3x text-muted mb-3 opacity-50"></i>
+                        <h5 class="text-secondary fw-bold">Sin empresas seguidas</h5>
+                        <p class="text-muted">Aún no sigues a ninguna empresa. Encuentra aliados estratégicos en el directorio.</p>
+                        <a href="{% url 'enterprises:lista' %}" class="btn btn-outline-primary shadow-sm mt-2">Directorio de Empresas</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-hover { transition: all 0.2s ease-in-out; }
+    .custom-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important; }
+    .border-dashed { border-style: dashed !important; border-width: 2px !important; }
+</style>
 {% endblock %}

@@ -51,3 +51,29 @@ class AgregarMiembroForm(UserCreationForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+class EmpresaUpdateForm(forms.ModelForm):
+    sitio_web = forms.CharField(
+        required=False,
+        label="Sitio Web (opcional)",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo.com'})
+    )
+
+    class Meta:
+        model = Empresa
+        fields = ['nombre', 'logo', 'area_produccion', 'email', 'direccion', 'sitio_web', 'telefono']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'logo': forms.FileInput(attrs={'class': 'form-control'}),
+            'area_produccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+    def clean_sitio_web(self):
+        url = self.cleaned_data.get('sitio_web')
+        if url:
+            url = url.strip()
+            if not url.startswith(('http://', 'https://')):
+                url = 'https://' + url
+        return url

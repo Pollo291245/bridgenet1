@@ -11,6 +11,7 @@ from .forms import EmpresaForm
 from products.models import Producto
 from publications.models import Publicacion
 from users.models import User
+from .forms import EmpresaUpdateForm
 from .forms import EmpresaForm, AgregarMiembroForm
 from django.db import transaction
 
@@ -80,26 +81,33 @@ class EmpresaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         ).exists()
 
 
+
 @login_required
-def toggle_favorita(request, pk):
+def toggle_seguir_empresa(request, pk):
     empresa_objetivo = get_object_or_404(Empresa, pk=pk)
-    
-    membresia_usuario = request.user.empresas_miembro.first()
-    if not membresia_usuario:
-        messages.error(request, "No perteneces a ninguna empresa para hacer esto.")
-        return redirect('enterprises:detalle', pk=pk)
-        
-    mi_empresa = membresia_usuario.empresa
+    usuario = request.user
 
-    if mi_empresa.empresa_favorita.filter(pk=pk).exists():
-        mi_empresa.empresa_favorita.remove(empresa_objetivo)
-        messages.info(request, f'Quitaste a {empresa_objetivo.nombre} de tus favoritos.')
+    # Opcional: Evitar que el usuario siga a su propia empresa
+    membresia = usuario.empresas_miembro.first()
+    if membresia and membresia.empresa == empresa_objetivo:
+        messages.warning(request, "No puedes seguir a tu propia empresa.")
+        # Redirigimos de vuelta
+        ruta_anterior = request.META.get('HTTP_REFERER')
+        return redirect(ruta_anterior if ruta_anterior else 'enterprises:detalle', pk=pk)
+
+    # Lógica de Seguir / Dejar de seguir vinculada al USUARIO
+    if empresa_objetivo in usuario.proveedores_favoritos.all():
+        usuario.proveedores_favoritos.remove(empresa_objetivo)
+        messages.info(request, f'Has dejado de seguir a {empresa_objetivo.nombre}.')
     else:
-        mi_empresa.empresa_favorita.add(empresa_objetivo)
-        messages.success(request, f'Añadiste a {empresa_objetivo.nombre} a tus favoritos.')
+        usuario.proveedores_favoritos.add(empresa_objetivo)
+        messages.success(request, f'Ahora sigues a {empresa_objetivo.nombre}.')
         
+    # Redirige de vuelta a la misma página
+    ruta_anterior = request.META.get('HTTP_REFERER')
+    if ruta_anterior:
+        return redirect(ruta_anterior)
     return redirect('enterprises:detalle', pk=pk)
-
 
 @login_required
 def valorar_empresa(request, pk):
@@ -225,3 +233,18 @@ class EmpresaNovedadesListView(DetailView):
             ).exists()
             
         return context
+    
+def editar_empresa(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    
+    
+    if request.method == 'POST':
+        form = EmpresaUpdateForm(request.POST, request.FILES, instance=empresa)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Perfil de empresa actualizado con éxito.')
+            return redirect('enterprises:detalle', pk=empresa.pk)
+    else:
+        form = EmpresaUpdateForm(instance=empresa)
+        
+    return render(request, 'enterprises/empresa_form.html', {'form': form, 'empresa': empresa})

@@ -76,19 +76,31 @@ class ProductoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # 4. Guardar producto como favorito (/productos/<id>/guardar/)
 @login_required
-def toggle_guardar_producto(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
-    user = request.user
-    
-    # Asumo que productos_guardados es un ManyToManyField en tu modelo User
-    if user.productos_guardados.filter(pk=pk).exists():
-        user.productos_guardados.remove(producto)
-        messages.info(request, f'Quitaste {producto.nombre_producto} de tu lista de guardados.')
+def toggle_seguir_empresa(request, pk):
+    empresa_objetivo = get_object_or_404(Empresa, pk=pk)
+    usuario = request.user
+
+    # Opcional: Evitar que el usuario siga a su propia empresa
+    membresia = usuario.empresas_miembro.first()
+    if membresia and membresia.empresa == empresa_objetivo:
+        messages.warning(request, "No puedes seguir a tu propia empresa.")
+        # Redirigimos de vuelta
+        ruta_anterior = request.META.get('HTTP_REFERER')
+        return redirect(ruta_anterior if ruta_anterior else 'enterprises:detalle', pk=pk)
+
+    # Lógica de Seguir / Dejar de seguir vinculada al USUARIO
+    if empresa_objetivo in usuario.proveedores_favoritos.all():
+        usuario.proveedores_favoritos.remove(empresa_objetivo)
+        messages.info(request, f'Has dejado de seguir a {empresa_objetivo.nombre}.')
     else:
-        user.productos_guardados.add(producto)
-        messages.success(request, f'Añadiste {producto.nombre_producto} a tu lista de guardados.')
+        usuario.proveedores_favoritos.add(empresa_objetivo)
+        messages.success(request, f'Ahora sigues a {empresa_objetivo.nombre}.')
         
-    return redirect('products:detalle', pk=pk)
+    # Redirige de vuelta a la misma página
+    ruta_anterior = request.META.get('HTTP_REFERER')
+    if ruta_anterior:
+        return redirect(ruta_anterior)
+    return redirect('enterprises:detalle', pk=pk)
 
 # 5. Valorar producto (/productos/<id>/valorar/)
 @login_required

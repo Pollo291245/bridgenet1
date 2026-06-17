@@ -15,6 +15,7 @@ class Empresa(models.Model):
     direccion = models.CharField(max_length=255)
     sitio_web = models.URLField(max_length=255, blank=True, null=True)
     telefono = models.CharField(max_length=20)
+    logo = models.ImageField(upload_to='logos_empresas/', null=True, blank=True)
     estado = models.CharField(max_length=10, choices=estado_choices.choices, default=estado_choices.ACTIVO)
     empresa_favorita = models.ManyToManyField('self', through='EmpresaFavorita', symmetrical=False, related_name='empresas_favoritas_rel')
 

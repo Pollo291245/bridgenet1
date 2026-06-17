@@ -48,18 +48,25 @@
 
                     <div class="d-flex mb-4 pb-4 border-bottom">
                         {% if user.is_authenticated %}
-                            <form action="{% url 'products:guardar' producto.pk %}" method="post" class="me-2">
+                            <form action="{% url 'products:guardar_producto' producto.pk %}" method="post" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-danger shadow-sm">
-                                    <i class="fas fa-heart"></i> Guardar Producto
-                                </button>
+                                {% if producto in user.productos_guardados.all %}
+                                    <!-- Botón si YA está guardado (Corazón sólido) -->
+                                    <button type="submit" class="btn btn-danger shadow-sm fw-bold">
+                                        <i class="fas fa-heart"></i> Guardado
+                                    </button>
+                                {% else %}
+                                    <!-- Botón si NO está guardado (Corazón hueco) -->
+                                    <button type="submit" class="btn btn-outline-danger shadow-sm fw-bold">
+                                        <i class="far fa-heart"></i> Guardar para después
+                                    </button>
+                                {% endif %}
                             </form>
-                            
-                            <button type="button" class="btn btn-outline-info shadow-sm" data-bs-toggle="modal" data-bs-target="#valorarModal">
-                                <i class="fas fa-star"></i> Valorar
-                            </button>
                         {% else %}
-                            <p class="text-muted small">Inicia sesión para interactuar comercialmente con este producto.</p>
+                            <!-- Mensaje para usuarios no logueados -->
+                            <a href="{% url 'login' %}" class="btn btn-outline-secondary shadow-sm">
+                                <i class="fas fa-lock"></i> Inicia sesión para guardar
+                            </a>
                         {% endif %}
                     </div>
 
