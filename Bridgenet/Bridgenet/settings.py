@@ -27,7 +27,7 @@ TEMPLATES_DIR= BASE_DIR / 'templates'
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') if os.getenv('ALLOWED_HOSTS') else [ "127.0.0.1", "localhost"]
 
@@ -87,11 +87,14 @@ from pathlib import Path
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', ''),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -139,5 +142,5 @@ LOGOUT_REDIRECT_URL = 'inicio'
 
 AUTHENTICATION_BACKENDS = [
     'users.backends.EmailCaseInsensitiveBackend',
-    'django.contrib.auth.backends.ModelBackend', # Mantenemos el default por seguridad
+    'django.contrib.auth.backends.ModelBackend',
 ]
