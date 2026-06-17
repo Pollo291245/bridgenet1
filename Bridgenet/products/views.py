@@ -5,10 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-
 from .models import Producto, ValoracionProducto
 from .forms import ProductoForm
-from enterprises.models import MiembroEmpresa  # <-- IMPORTANTE: Importamos MiembroEmpresa
+from enterprises.models import Empresa, MiembroEmpresa
 
 # 1. Listado de productos con filtros (/productos/)
 class ProductoListView(ListView):
@@ -76,31 +75,22 @@ class ProductoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # 4. Guardar producto como favorito (/productos/<id>/guardar/)
 @login_required
-def toggle_seguir_empresa(request, pk):
-    empresa_objetivo = get_object_or_404(Empresa, pk=pk)
+def guardar_producto(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
     usuario = request.user
-
-    # Opcional: Evitar que el usuario siga a su propia empresa
-    membresia = usuario.empresas_miembro.first()
-    if membresia and membresia.empresa == empresa_objetivo:
-        messages.warning(request, "No puedes seguir a tu propia empresa.")
-        # Redirigimos de vuelta
-        ruta_anterior = request.META.get('HTTP_REFERER')
-        return redirect(ruta_anterior if ruta_anterior else 'enterprises:detalle', pk=pk)
-
-    # Lógica de Seguir / Dejar de seguir vinculada al USUARIO
-    if empresa_objetivo in usuario.proveedores_favoritos.all():
-        usuario.proveedores_favoritos.remove(empresa_objetivo)
-        messages.info(request, f'Has dejado de seguir a {empresa_objetivo.nombre}.')
+ 
+    if producto in usuario.productos_guardados.all():
+        usuario.productos_guardados.remove(producto)
+        messages.info(request, f'"{producto.nombre_producto}" fue quitado de tus guardados.')
     else:
-        usuario.proveedores_favoritos.add(empresa_objetivo)
-        messages.success(request, f'Ahora sigues a {empresa_objetivo.nombre}.')
-        
-    # Redirige de vuelta a la misma página
+        usuario.productos_guardados.add(producto)
+        messages.success(request, f'"{producto.nombre_producto}" fue guardado correctamente.')
+ 
     ruta_anterior = request.META.get('HTTP_REFERER')
     if ruta_anterior:
         return redirect(ruta_anterior)
-    return redirect('enterprises:detalle', pk=pk)
+    return redirect('products:detalle', pk=pk)
+ 
 
 # 5. Valorar producto (/productos/<id>/valorar/)
 @login_required

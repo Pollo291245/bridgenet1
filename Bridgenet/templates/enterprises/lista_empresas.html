@@ -35,9 +35,15 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 30px;">
         {% for empresa in empresas %}
             <article class="tarjeta" style="align-items: center; text-align: center;">
-                <div style="width: 60px; height: 60px; background-color: var(--color-principal); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin-bottom: 15px;">
-                    {{ empresa.nombre|make_list|first|upper }}
-                </div>
+
+                <{% if empresa.logo %}
+                <img src="{{ empresa.logo.url }}" alt="Logo de {{ empresa.nombre }}" class="empresa-logo" style="width: 150px; height: 150px; object-fit: contain; border-radius: 8px;">
+                {% else %}
+                    <div style="width: 60px; height: 60px; background-color: var(--color-principal); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin-bottom: 15px;">
+                        {{ empresa.nombre|make_list|first|upper }}
+                    </div>
+                {% endif %}
+
                 <h3>{{ empresa.nombre }}</h3>
                 <p class="empresa-info" style="margin-bottom: 5px;"><strong>Área:</strong> {{ empresa.area_produccion }}</p>
                 <p class="empresa-info" style="font-size: 0.85rem; margin-bottom: 15px;">{{ empresa.get_tamano_empresa_display }}</p>

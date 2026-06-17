@@ -6,6 +6,7 @@ from django.contrib import messages
 from .forms import ComentarioForm
 from .models import Publicacion, Comentarios
 from enterprises.models import MiembroEmpresa
+from django.contrib.auth.decorators import login_required
 
 # 1. Listado general de publicaciones
 class PublicacionListView(ListView):
@@ -14,7 +15,6 @@ class PublicacionListView(ListView):
     context_object_name = 'publicaciones'
     ordering = ['-fecha_publicacion'] # Las más recientes primero
 
-# 2. Detalle de una publicación
 class PublicacionDetailView(DetailView):
     model = Publicacion
     template_name = 'publications/detalle_publicacion.html'
@@ -22,8 +22,7 @@ class PublicacionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # ESTA ES LA CLAVE PARA EL FRONTEND: 
-        # Le enviamos al HTML un aviso de si este usuario tiene permiso para ver los botones
+        
         context['puede_editar'] = False
         if self.request.user.is_authenticated:
             context['puede_editar'] = MiembroEmpresa.objects.filter(
@@ -31,6 +30,10 @@ class PublicacionDetailView(DetailView):
                 usuario=self.request.user,
                 rol__in=[MiembroEmpresa.rol_choices.ADMIN, MiembroEmpresa.rol_choices.EDITOR]
             ).exists()
+            
+        context['comentarios'] = self.object.comentarios_publicacion.all().order_by('-fecha_comentario')
+        context['comentario_form'] = ComentarioForm()
+        
         return context
 
 # 3. Crear Publicación (Solo Admin y Editor)
@@ -73,35 +76,6 @@ class PublicacionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         messages.success(self.request, 'Publicación actualizada correctamente.')
         return reverse('publications:detalle', kwargs={'pk': self.object.pk})
 
-# 5. Eliminar Publicación (Solo Admin y Editor de la misma empresa)
-# Asegúrate de importar el formulario arriba:
-# from .forms import ComentarioForm
-
-class PublicacionDetailView(DetailView):
-    model = Publicacion
-    template_name = 'publications/detalle_publicacion.html'
-    context_object_name = 'publicacion'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        # 1. Lógica de seguridad visual que ya teníamos
-        context['puede_editar'] = False
-        if self.request.user.is_authenticated:
-            context['puede_editar'] = MiembroEmpresa.objects.filter(
-                empresa=self.object.empresa,
-                usuario=self.request.user,
-                rol__in=[MiembroEmpresa.rol_choices.ADMIN, MiembroEmpresa.rol_choices.EDITOR]
-            ).exists()
-            
-        # 2. NUEVO: Enviar comentarios y el formulario vacío al HTML
-        # Filtramos los comentarios asociados a esta publicación y los ordenamos por fecha (más recientes primero)
-        context['comentarios'] = self.object.comentarios_publicacion.all().order_by('-fecha_comentario')
-        context['comentario_form'] = ComentarioForm()
-        
-        return context
-    
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def agregar_comentario(request, pk):

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bandeja de Entrada - BridgeNet{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow border-0" style="border-radius: 12px; overflow: hidden;">
+                
+                <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0" style="color: var(--color-principal, #003d6b); font-weight: bold;">
+                        <i class="fas fa-inbox me-2"></i> Bandeja de Entrada
+                    </h4>
+                    <span class="badge px-3 py-2" style="background-color: var(--color-secundario, #005a9c); font-size: 0.9rem; border-radius: 20px;">
+                        {{ conversaciones.count }} Conversaciones
+                    </span>
+                </div>
+
+                <div class="list-group list-group-flush">
+                    {% for conversacion in conversaciones %}
+                        
+                        <a href="{% url 'messaging:detalle_conversacion' conversacion.id %}" class="list-group-item list-group-item-action p-4 d-flex justify-content-between align-items-center" style="transition: background-color 0.2s; border-left: 4px solid transparent;">
+                            
+                            <div style="flex: 1;">
+                                <h5 class="mb-1 fw-bold text-dark" style="font-size: 1.15rem;">
+                                    {% if conversacion.empresa_solicitante == mi_empresa %}
+                                        {{ conversacion.empresa_receptora.nombre }}
+                                    {% else %}
+                                        {{ conversacion.empresa_solicitante.nombre }}
+                                    {% endif %}
+                                </h5>
+
+                                <p class="mb-0 text-muted" style="font-size: 0.95rem; margin-top: 5px;">
+                                    {% with ultimo_mensaje=conversacion.mensajes.last %}
+                                        {% if ultimo_mensaje %}
+                                            {% if ultimo_mensaje.empresa_remitente == mi_empresa %}
+                                                <strong style="color: var(--color-principal);">Tú:</strong>
+                                            {% else %}
+                                                <strong style="color: #475569;">{{ ultimo_mensaje.autor.first_name|default:"Ellos" }}:</strong>
+                                            {% endif %}
+                                            
+                                            {{ ultimo_mensaje.contenido|truncatechars:80 }}
+                                        {% else %}
+                                            <span class="fst-italic" style="color: #94a3b8;">No hay mensajes en esta conversación.</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </p>
+                            </div>
+
+                            <div class="text-end ms-3" style="min-width: 100px;">
+                                <small class="text-muted d-block mb-2 fw-medium">{{ conversacion.actualizado_en|date:"d M Y" }}</small>
+                                
+                                {% with ultimo_mensaje=conversacion.mensajes.last %}
+                                    {% if ultimo_mensaje and ultimo_mensaje.empresa_remitente != mi_empresa and not ultimo_mensaje.leido %}
+                                        <span class="badge bg-danger rounded-pill px-2 py-1">Nuevo</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+
+                        </a>
+
+                    {% empty %}
+                        <div class="p-5 text-center text-muted" style="background-color: #f8fafc;">
+                            <i class="fas fa-comments mb-3" style="font-size: 3.5rem; color: #cbd5e1;"></i>
+                            <h5 class="fw-bold text-dark">Tu bandeja de entrada está vacía</h5>
+                            <p>Aún no tienes conversaciones con otras empresas en BridgeNet.</p>
+                            <a href="{% url 'enterprises:lista' %}" class="btn text-white mt-2 px-4" style="background-color: var(--color-secundario, #005a9c); border-radius: 8px;">
+                                Explorar Empresas
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item:hover {
+        background-color: #f8fafc !important;
+        border-left: 4px solid var(--color-acento, #4fa1d8) !important;
+    }
+</style>
+{% endblock %}

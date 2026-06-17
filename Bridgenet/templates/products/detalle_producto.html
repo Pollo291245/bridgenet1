@@ -70,6 +70,10 @@
                         {% endif %}
                     </div>
 
+                    <a href="{% url 'messaging:iniciar_conversacion' producto.empresa.id %}?producto_id={{ producto.id }}" class="btn text-white w-100 mt-3" style="background-color: var(--color-secundario, #005a9c); border-radius: 8px; font-weight: bold; padding: 10px;">
+                        <i class="fas fa-comment-dots me-2"></i> Contactar al Proveedor
+                    </a>
+
                     {% if puede_editar %}
                         <div class="d-flex justify-content-end mt-3">
                             <a href="{% url 'products:editar' producto.pk %}" class="btn btn-warning me-2 shadow-sm">

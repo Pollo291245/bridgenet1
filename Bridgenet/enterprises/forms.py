@@ -45,6 +45,20 @@ class AgregarMiembroForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
+        # Ya no necesitamos definir los widgets aquí porque lo haremos en el __init__
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Iteramos sobre todos los campos del formulario generados por Django
+        for field_name, field in self.fields.items():
+            # Excluimos el checkbox (que usa form-check-input) y el selector (form-select)
+            if not isinstance(field.widget, forms.CheckboxInput) and not isinstance(field.widget, forms.Select):
+                # Le asignamos la clase form-control a todo el resto (textos, correos y contraseñas)
+                field.widget.attrs['class'] = 'form-control'
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),

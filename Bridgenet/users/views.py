@@ -6,14 +6,14 @@ from django.db import transaction
 from django.shortcuts import redirect, render
 
 from enterprises.models import Empresa, MiembroEmpresa
-
+from .forms import EmpresaRegistroForm, PerfilForm, EmailAuthenticationForm
 from .forms import EmpresaRegistroForm, PerfilForm, AuthenticationForm
 
 
 
 class InicioSesionView(LoginView):
     template_name = 'users/login.html'
-    form_class = AuthenticationForm
+    form_class = EmailAuthenticationForm
     redirect_authenticated_user = True
 
 

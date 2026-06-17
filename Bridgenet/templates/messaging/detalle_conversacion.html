@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Chat con {{ otra_empresa.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="card shadow border-0" style="border-radius: 12px; height: 75vh; display: flex; flex-direction: column;">
+        
+        <div class="card-header bg-white d-flex align-items-center p-3 border-bottom">
+            <a href="{% url 'messaging:bandeja_entrada' %}" class="btn btn-sm btn-light me-3">⬅️ Volver</a>
+            <div>
+                <h5 class="mb-0 fw-bold">{{ otra_empresa.nombre }}</h5>
+                <small class="text-muted">{{ otra_empresa.area_produccion }}</small>
+            </div>
+        </div>
+        
+        {% if producto_contexto %}
+        <div style="background-color: #eff6ff; border-bottom: 1px solid #bfdbfe; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="font-size: 0.85rem; color: #3b82f6; font-weight: bold; text-transform: uppercase;">
+                    <i class="fas fa-box"></i> Consultando por producto
+                </span>
+                <div style="color: #1e3a8a; font-weight: 500;">
+                    {{ producto_contexto.nombre }}
+                </div>
+            </div>
+            <a href="{% url 'products:detalle' producto_contexto.id %}" target="_blank" class="btn btn-sm btn-outline-primary" style="border-radius: 20px; font-size: 0.8rem;">
+                Ver detalles
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="card-body p-4" style="overflow-y: auto; flex: 1; background-color: #f8fafc;" id="chat-box">
+            <div id="mensajes-container">
+                {% for mensaje in mensajes %}
+                    <div class="mb-3 d-flex {% if mensaje.empresa_remitente == mi_empresa %}justify-content-end{% else %}justify-content-start{% endif %}">
+                        <div style="max-width: 70%; padding: 12px 18px; border-radius: 15px;
+                            {% if mensaje.empresa_remitente == mi_empresa %}
+                                background-color: var(--color-principal, #003d6b); color: white; border-bottom-right-radius: 2px;
+                            {% else %}
+                                background-color: white; color: #333; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px;
+                            {% endif %}">
+                            
+                            {% if mensaje.empresa_remitente != mi_empresa %}
+                                <div style="font-size: 0.75rem; color: #64748b; font-weight: bold; margin-bottom: 3px;">
+                                    {{ mensaje.autor.first_name }} {{ mensaje.autor.last_name }}
+                                </div>
+                            {% endif %}
+                            
+                            {{ mensaje.contenido|linebreaksbr }}
+                            
+                            <div style="font-size: 0.7rem; margin-top: 5px; text-align: right;
+                                {% if mensaje.empresa_remitente == mi_empresa %}color: #cbd5e1;{% else %}color: #94a3b8;{% endif %}">
+                                {{ mensaje.creado_en|date:"H:i" }}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-muted mt-5">No hay mensajes aún. Escribe algo para iniciar la conversación.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card-footer bg-white p-3 border-top">
+            <form method="post" class="d-flex gap-2">
+                {% csrf_token %}
+                <input type="text" name="contenido" class="form-control form-control-lg" placeholder="Escribe un mensaje..." required autocomplete="off" style="border-radius: 25px;">
+                <button type="submit" class="btn text-white px-4" style="background-color: var(--color-secundario, #005a9c); border-radius: 25px; font-weight: bold;">
+                    Enviar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Auto-scroll al final del chat al cargar la página
+    const chatBox = document.getElementById('chat-box');
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // 2. Refrescar silenciosamente solo la parte de los mensajes cada 5 segundos
+    setInterval(function() {
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const nuevosMensajes = doc.getElementById('mensajes-container').innerHTML;
+                
+                // Solo actualizar si hay cambios
+                const contenedorActual = document.getElementById('mensajes-container');
+                if (contenedorActual.innerHTML !== nuevosMensajes) {
+                    contenedorActual.innerHTML = nuevosMensajes;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+    }, 5000);
+</script>
+{% endblock %}

@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-kp9j=$p7gy+j7jt!d$08i@=y4q&pu2*mg8hu_$br^ow9om$i0&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["bridge-net.live",
+    "www.bridge-net.live", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'products',
     'publications',
     'main',
+    'messaging',
 ]
 
 MIDDLEWARE = [
@@ -113,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-cl'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -132,3 +134,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'perfil'
 LOGOUT_REDIRECT_URL = 'inicio'
+
+AUTHENTICATION_BACKENDS = [
+    'users.backends.EmailCaseInsensitiveBackend',
+    'django.contrib.auth.backends.ModelBackend', # Mantenemos el default por seguridad
+]
